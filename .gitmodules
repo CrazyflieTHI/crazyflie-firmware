@@ -13,3 +13,6 @@
 [submodule "vendor/unity"]
 	path = vendor/unity
 	url = https://github.com/throwtheswitch/unity.git
+[submodule "vendor/sitl/FreeRTOS"]
+	path = vendor/sitl/FreeRTOS
+	url = https://github.com/FreeRTOS/FreeRTOS.git
