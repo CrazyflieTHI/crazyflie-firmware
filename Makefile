@@ -1,3 +1,18 @@
+#
+# Make sure Kbuild use our config that hinders some configs from being enabled
+# on allyesconfig or randconfig.
+#
+export KCONFIG_ALLCONFIG ?= configs/all.config
+
+KBUILD_OUTPUT ?= build
+
+-include $(KBUILD_OUTPUT)/include/config/auto.conf
+
+ifeq ($(origin TARGET_DEFINED), undefined)
+_all:
+
+else ifeq ($(origin CONFIG_SITL_CF2), undefined)
+$(info Building for stm32f Crazyflie)
 
 OPENOCD           ?= openocd
 OPENOCD_INTERFACE ?= interface/stlink-v2.cfg
@@ -199,6 +214,119 @@ prep:
 
 check_submodules:
 	@cd $(srctree); $(PYTHON) tools/make/check-for-submodules.py
+
+
+else ifeq ($(CONFIG_SITL_CF2), y)
+$(info Building for x86 Software-In-The-Loop)
+
+CC = gcc
+
+PYTHON            ?= python3
+
+ARCH := x86
+SRCARCH := x86
+
+# ARCH_CFLAGS += -Os -g3 -Wall -Wno-maybe-uninitialized -Werror -Wno-error=overflow
+ARCH_CFLAGS += -std=gnu11 -Os -g3 -Wall -Wno-maybe-uninitialized -Werror -Wno-error=overflow
+ARCH_CFLAGS += -Wno-error=unused-but-set-variable -Wno-error=incompatible-pointer-types -Wno-error=pointer-to-int-cast
+ARCH_CFLAGS += -Wno-error=format= -Wno-error=int-to-pointer-cast -Wno-error=address-of-packed-member
+ARCH_CFLAGS += -Wno-error=stringop-truncation -Wno-error=maybe-uninitialized -Wno-error=unused-variable
+ARCH_CFLAGS += -Wno-error=unused-function -Wmissing-braces -fno-strict-aliasing -ffunction-sections
+ARCH_CFLAGS += -fdata-sections -Wdouble-promotion -Wno-deprecated-declarations
+ARCH_CFLAGS += -DX86
+
+# ARCH_CFLAGS += -I/usr/include
+
+LINKER_DIR = $(srctree)/tools/make/sitl/linker
+
+image_LDFLAGS += -Wl,--gc-sections
+image_LDFLAGS += -lgsl -lgslcblas -lm
+image_LDFLAGS += -T $(LINKER_DIR)/log_param_linker.ld
+
+LDFLAGS += -lpthread -lrt
+LDFLAGS += -lgsl -lgslcblas -lm
+LDFLAGS += -L/usr/local/lib/
+
+INCLUDES += -I$(srctree)/vendor/sitl/FreeRTOS/FreeRTOS/Source/include/
+INCLUDES += -I$(srctree)/vendor/sitl/FreeRTOS/FreeRTOS/Source/portable/ThirdParty/GCC/Posix/
+INCLUDES += -I$(srctree)/vendor/sitl/FreeRTOS/FreeRTOS/Source/portable/GCC/Linux/
+INCLUDES += -I$(srctree)/src/config
+INCLUDES += -I$(srctree)/src/hal/interface/
+INCLUDES += -I$(srctree)/src/deck/interface -I$(srctree)/src/deck/drivers/interface
+
+INCLUDES += -I$(srctree)/src/modules/interface
+INCLUDES += -I$(srctree)/src/modules/interface/kalman_core
+INCLUDES += -I$(srctree)/src/modules/interface/lighthouse
+INCLUDES += -I$(srctree)/src/modules/interface/outlierfilter
+INCLUDES += -I$(srctree)/src/modules/interface/controller
+INCLUDES += -I$(srctree)/src/modules/interface/estimator
+
+INCLUDES += -I$(srctree)/src/platform/
+INCLUDES += -I$(srctree)/src/platform/interface/
+INCLUDES += -I$(srctree)/src/utils/interface/
+INCLUDES += -I$(srctree)/src/utils/interface/lighthouse/
+INCLUDES += -I$(srctree)/src/drivers/interface/
+INCLUDES += -I$(srctree)/src/lib/CMSIS/STM32F4xx/Include/
+
+INCLUDES += -I$(KBUILD_OUTPUT)/include/generated
+
+
+# FreeRTOS Plus
+$(SITL_FREERTOS_PLUS_DIR)
+INCLUDES += -I$(srctree)/vendor/sitl/FreeRTOS/FreeRTOS-Plus
+
+# Here we tell Kbuild where to look for Kbuild files which will tell the
+# buildsystem which sources to build
+objs-y += src
+objs-y += vendor
+
+#
+# Make sure Kbuild use our config that hinders some configs from being enabled
+# on allyesconfig or randconfig.
+#
+export KCONFIG_ALLCONFIG ?= configs/all.config
+
+KBUILD_OUTPUT ?= build
+
+-include $(KBUILD_OUTPUT)/include/config/auto.conf
+
+PLATFORM  ?= cf2
+PROG ?= $(PLATFORM)
+
+ifeq ($(CONFIG_DEBUG),y)
+ARCH_CFLAGS	+= -O0 -Wconversion
+else
+ARCH_CFLAGS += -Os -Werror
+endif
+
+_all:
+
+all: $(PROG).hex $(PROG).bin
+	@echo "Build for the $(PLATFORM)!"
+	@$(PYTHON) $(srctree)/tools/make/versionTemplate.py --crazyflie-base $(srctree) --print-version
+
+	#
+	# Create symlinks to the ouput files in the build directory
+	#
+	for f in $$(ls $(PROG).*); do \
+		ln -sf $(KBUILD_OUTPUT)/$$f $(srctree)/$$(basename $$f); \
+	done
+
+include tools/make/targets.mk
+
+#Print preprocessor #defines
+prep:
+	@$(CC) $(CFLAGS) -dM -E - < /dev/null
+
+check_submodules:
+	@cd $(srctree); $(PYTHON) tools/make/check-for-submodules.py
+
+
+else
+    $(error Invalid target specified)
+	@exit 1
+endif
+
 
 # Give control over to Kbuild
 -include tools/kbuild/Makefile.kbuild

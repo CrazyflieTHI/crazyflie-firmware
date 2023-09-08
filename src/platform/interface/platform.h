@@ -51,6 +51,10 @@ typedef enum {
   SensorImplementation_bosch,
   #endif
 
+  #ifdef CONFIG_SENSORS_SITL
+  SensorImplementation_sitl,
+  #endif
+
   SensorImplementation_COUNT,
 } SensorImplementation_t;
 

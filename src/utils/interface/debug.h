@@ -49,7 +49,11 @@
 
 void debugInit(void);
 
-#if defined(UNIT_TEST_MODE)
+#if defined(CONFIG_SITL_CF2)
+  #include <stdio.h>
+  #define DEBUG_PRINT(fmt, ...) printf(DEBUG_FMT(fmt), ##__VA_ARGS__)
+  #define DEBUG_PRINT_OS(fmt, ...) printf(DEBUG_FMT(fmt), ##_VA_ARGS__)
+#elif defined(UNIT_TEST_MODE)
   #include <stdio.h>
   #define DEBUG_PRINT(fmt, ...) printf(DEBUG_FMT(fmt), ##__VA_ARGS__)
   #define DEBUG_PRINT_OS(fmt, ...) printf(DEBUG_FMT(fmt), ##__VA_ARGS__)

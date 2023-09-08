@@ -45,7 +45,29 @@
 
 #include "trace.h"
 #include "usec_time.h"
+#include "autoconf.h"
 
+#ifdef CONFIG_SITL_CF2
+#define P_NAME "Crazyflie 2.0"
+#define QUAD_FORMATION_X
+
+#define CONFIG_BLOCK_ADDRESS      (2048 * (64-1))
+#define MCU_ID_ADDRESS          0x1FFF7A10
+#define MCU_FLASH_SIZE_ADDRESS  0x1FFF7A22
+#define FREERTOS_HEAP_SIZE        40000
+#define FREERTOS_MIN_STACK_SIZE   150
+#define FREERTOS_MCU_CLOCK_HZ     168000000
+
+/* Run time stats gathering configuration options. */
+unsigned long ulGetRunTimeCounterValue( void ); /* Prototype of function that returns run time counter. */  
+#define configGENERATE_RUN_TIME_STATS 1
+
+extern void vPortFindTicksPerSecond( void );
+// #define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() vPortFindTicksPerSecond()
+
+extern unsigned long ulPortGetTimerValue( void );
+// #define portGET_RUN_TIME_COUNTER_VALUE() ulPortGetTimerValue()
+#else
 #define CONFIG_BLOCK_ADDRESS    (2048 * (64-1))
 #define MCU_ID_ADDRESS          0x1FFF7A10
 #define MCU_FLASH_SIZE_ADDRESS  0x1FFF7A22
@@ -58,6 +80,8 @@
 #define configGENERATE_RUN_TIME_STATS 1
 #define portCONFIGURE_TIMER_FOR_RUN_TIME_STATS() usecTimerInit()
 #define portGET_RUN_TIME_COUNTER_VALUE() usecTimestamp()
+#endif
+
 
 
 // Task priorities. Higher number higher priority
@@ -70,6 +94,8 @@
 #define SYSTEM_TASK_PRI         2
 #define CRTP_TX_TASK_PRI        2
 #define CRTP_RX_TASK_PRI        2
+#define CRTPROS_TX_TASK_PRI     2
+#define CRTPROS_RX_TASK_PRI     2
 #define EXTRX_TASK_PRI          2
 #define ZRANGER_TASK_PRI        2
 #define ZRANGER2_TASK_PRI       2
@@ -115,6 +141,8 @@
 #define PM_TASK_NAME            "PWRMGNT"
 #define CRTP_TX_TASK_NAME       "CRTP-TX"
 #define CRTP_RX_TASK_NAME       "CRTP-RX"
+#define CRTPROS_TX_TASK_NAME    "ROSCRTP-TX"
+#define CRTPROS_RX_TASK_NAME    "ROSCRTP-RX"
 #define CRTP_RXTX_TASK_NAME     "CRTP-RXTX"
 #define LOG_TASK_NAME           "LOG"
 #define MEM_TASK_NAME           "MEM"
@@ -167,6 +195,8 @@
 #define PM_TASK_STACKSIZE             configMINIMAL_STACK_SIZE
 #define CRTP_TX_TASK_STACKSIZE        configMINIMAL_STACK_SIZE
 #define CRTP_RX_TASK_STACKSIZE        (2* configMINIMAL_STACK_SIZE)
+#define CRTPROS_TX_TASK_STACKSIZE     configMINIMAL_STACK_SIZE
+#define CRTPROS_RX_TASK_STACKSIZE     (2* configMINIMAL_STACK_SIZE)
 #define CRTP_RXTX_TASK_STACKSIZE      configMINIMAL_STACK_SIZE
 #define LOG_TASK_STACKSIZE            (2 * configMINIMAL_STACK_SIZE)
 #define MEM_TASK_STACKSIZE            (2 * configMINIMAL_STACK_SIZE)

@@ -30,6 +30,7 @@
 #include "autoconf.h"
 #include "adc.h"
 #include "syslink.h"
+#ifndef CONFIG_SITL_CF2
 #include "deck.h"
 
 
@@ -142,5 +143,117 @@ void pmIgnoreChargedState(bool ignore);
  * Register a callback to be run when the NRF51 signals shutdown
  */
 bool pmRegisterGracefulShutdownCallback(graceful_shutdown_callback_t cb);
+
+#else
+
+typedef void (*graceful_shutdown_callback_t)();
+
+typedef struct {uint8_t id;} deckPin_t;
+
+typedef enum
+{
+  battery,
+  charging,
+  charged,
+  lowPower,
+  shutDown,
+} PMStates;
+
+typedef enum
+{
+  charge100mA,
+  charge500mA,
+  chargeMax,
+} PMChargeStates;
+
+typedef enum
+{
+  USBNone,
+  USB500mA,
+  USBWallAdapter,
+} PMUSBPower;
+
+// typedef void (*graceful_shutdown_callback_t)();
+
+void pmInit(void);
+
+bool pmTest(void);
+
+/**
+ * Power management task
+ */
+void pmTask(void *param);
+
+void pmSetChargeState(PMChargeStates chgState);
+void pmSyslinkUpdate(SyslinkPacket *slp);
+
+/**
+ * Returns the battery voltage i volts as a float
+ */
+float pmGetBatteryVoltage(void);
+
+/**
+ * Returns the min battery voltage i volts as a float
+ */
+float pmGetBatteryVoltageMin(void);
+
+/**
+ * Returns the max battery voltage i volts as a float
+ */
+float pmGetBatteryVoltageMax(void);
+
+/**
+ * Updates and calculates battery values.
+ * Should be called for every new adcValues sample.
+ */
+// void pmBatteryUpdate(AdcGroup* adcValues);
+
+/**
+ * Returns true if the battery is below its low capacity threshold for an
+ * extended period of time.
+ */
+bool pmIsBatteryLow(void);
+
+/**
+ * Returns true if the charger is currently connected
+ */
+bool pmIsChargerConnected(void);
+
+/**
+ * Returns true if the battery is currently charging
+ */
+bool pmIsCharging(void);
+
+/**
+ * Returns true if the battery is currently in use
+ */
+bool pmIsDischarging(void);
+
+/**
+ * Enable or disable external battery voltage measuring.
+ */
+// void pmEnableExtBatteryVoltMeasuring(const deckPin_t pin, float multiplier);
+
+/**
+ * Measure an external voltage.
+ */
+float pmMeasureExtBatteryVoltage(void);
+
+/**
+ * Enable or disable external battery current measuring.
+ */
+// void pmEnableExtBatteryCurrMeasuring(const deckPin_t pin, float ampPerVolt);
+
+/**
+ * Measure an external current.
+ */
+float pmMeasureExtBatteryCurrent(void);
+
+/**
+ * Register a callback to be run when the NRF51 signals shutdown
+ */
+// bool pmRegisterGracefulShutdownCallback(graceful_shutdown_callback_t cb);
+
+#endif
 
 #endif /* PM_H_ */

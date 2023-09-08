@@ -27,6 +27,8 @@
 #ifndef __LOG_H__
 #define __LOG_H__
 
+#include "autoconf.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -120,6 +122,14 @@ struct log_s {
   uint8_t type;
   char * name;
   void * address;
+  /* TODO: Need a better solution for this */
+  // #if defined(ARCH_32) && defined(CONFIG_SITL_CF2)
+  // uint8_t useless[3];
+  // #elif defined(ARCH_64) && defined(CONFIG_SITL_CF2)
+  // uint8_t useless[7];
+  #ifdef CONFIG_SITL_CF2
+  uint8_t useless[7];
+  #endif
 };
 
 /* Possible variable types */

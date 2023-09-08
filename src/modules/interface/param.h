@@ -26,6 +26,8 @@
 
 #pragma once
 
+#include "autoconf.h"
+
 #include <stdint.h>
 
 // Include param_logic.h for backwards compatibility in apps
@@ -37,6 +39,10 @@ struct param_s {
   uint8_t extended_type;
   char * name;
   void * address;
+  /* TODO: Need a better solution for this */
+  #ifdef CONFIG_SITL_CF2
+  uint8_t useless[17];
+  #endif
   void (*callback)(void);
   void * (*getter)(void);
 };

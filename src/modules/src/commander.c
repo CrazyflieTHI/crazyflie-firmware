@@ -29,6 +29,8 @@
 #include "task.h"
 #include "queue.h"
 
+#include "autoconf.h"
+
 #include "commander.h"
 #include "crtp_commander.h"
 #include "crtp_commander_high_level.h"

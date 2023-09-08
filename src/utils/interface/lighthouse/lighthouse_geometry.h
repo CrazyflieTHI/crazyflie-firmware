@@ -1,7 +1,13 @@
 #pragma once
 
+#include "autoconf.h"
+
 #include <stdbool.h>
+#ifdef CONFIG_SITL_CF2
 #include "cf_math.h"
+#else
+#include "arm_math.h"
+#endif
 #include "stabilizer_types.h"
 
 typedef struct {

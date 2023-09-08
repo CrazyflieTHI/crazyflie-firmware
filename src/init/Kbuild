@@ -1,2 +1,8 @@
+ifndef CONFIG_SITL_CF2
 obj-y += main.o
 obj-y += startup_stm32f40xx.o
+endif
+
+ifdef CONFIG_SITL_CF2
+obj-y += main_sitl.o
+endif

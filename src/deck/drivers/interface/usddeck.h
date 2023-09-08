@@ -1,6 +1,10 @@
 #ifndef __USDDECK_H__
 #define __USDDECK_H__
 
+#ifdef CONFIG_SITL_CF2
+/* Empty */
+#else
+
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -29,5 +33,6 @@ uint32_t usddeckFileSize(void);
 // Read "length" number of bytes at "offset" into "buffer" of current file
 // Only works if logging is stopped
 bool usddeckRead(uint32_t offset, uint8_t* buffer, uint16_t length);
+#endif
 
 #endif //__USDDECK_H__

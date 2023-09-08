@@ -43,6 +43,9 @@
 #ifdef CONFIG_PLATFORM_FLAPPER
     #include "platform_defaults_flapper.h"
 #endif
+#ifdef CONFIG_PLATFORM_SITL_CF2
+    #include "platform_defaults_cf2.h"
+#endif
 
 // IMU alignment on the airframe 
 #ifndef IMU_PHI

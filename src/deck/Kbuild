@@ -1,3 +1,5 @@
+# ifndef CONFIG_SITL_CF2
 obj-y += api/
 obj-y += core/
 obj-y += drivers/src/
+# endif

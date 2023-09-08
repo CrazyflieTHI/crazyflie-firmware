@@ -23,13 +23,13 @@
  *
  *
  */
+#include <string.h>
 #include <math.h>
 
 #include "sensfusion6.h"
 #include "log.h"
 #include "param.h"
 #include "physicalConstants.h"
-
 #include "autoconf.h"
 
 #ifdef CONFIG_IMU_MADGWICK_QUATERNION
@@ -282,6 +282,7 @@ float sensfusion6GetAccZWithoutGravity(const float ax, const float ay, const flo
 //---------------------------------------------------------------------------------------------------
 // Fast inverse square-root
 // See: http://en.wikipedia.org/wiki/Fast_inverse_square_root
+#ifndef CONFIG_SITL_CF2
 float invSqrt(float x)
 {
   float halfx = 0.5f * x;
@@ -292,6 +293,19 @@ float invSqrt(float x)
   y = y * (1.5f - (halfx * y * y));
   return y;
 }
+#else
+float invSqrt(float x)
+{
+  float halfx = 0.5f * x;
+  float y = x;
+  unsigned i;
+  memcpy(&i, &y, sizeof(i));
+  i = 0x5f3759df - (i >> 1);
+  memcpy(&y, &i, sizeof(y));
+  y = y * (1.5f - (halfx * y * y));
+  return y;
+}
+#endif
 
 static float sensfusion6GetAccZ(const float ax, const float ay, const float az)
 {

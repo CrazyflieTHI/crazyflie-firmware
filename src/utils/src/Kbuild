@@ -1,3 +1,4 @@
+ifndef CONFIG_SITL_CF2
 obj-y += cfassert.o
 obj-y += clockCorrectionEngine.o
 obj-y += configblockeeprom.o
@@ -31,3 +32,28 @@ obj-y += version.o
 version-objs := version_gen.o
 src/utils/src/version_gen.c: src/utils/src/version.vtpl FORCE
 	 $(PYTHON) $(srctree)/tools/make/versionTemplate.py --crazyflie-base $(srctree) $< $@
+endif
+
+ifdef CONFIG_SITL_CF2
+obj-y += configblock_sitl.o
+obj-y += debug.o
+obj-y += filter.o
+obj-y += eprintf.o
+obj-y += crc32.o
+obj-y += num.o
+obj-y += statsCnt.o
+obj-y += rateSupervisor.o
+
+### Sub directories
+obj-y += lighthouse/
+
+### Implementations for abort(), malloc() and free(), needed to interact with apps written in C++
+obj-y += pid.o
+
+### Add rules for handling generated version.c
+obj-y += version.o
+version-objs := version_gen.o
+src/utils/src/version_gen.c: src/utils/src/version.vtpl FORCE
+	 $(PYTHON) $(srctree)/tools/make/versionTemplate.py --crazyflie-base $(srctree) $< $@
+
+endif

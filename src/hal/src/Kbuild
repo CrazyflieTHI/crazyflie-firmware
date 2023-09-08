@@ -1,3 +1,4 @@
+ifndef CONFIG_SITL_CF2
 obj-y += amg8833.o
 obj-y += buzzer.o
 obj-y += freeRTOSdebug.o
@@ -22,3 +23,16 @@ obj-y += usbd_desc.o
 obj-y += usblink.o
 obj-y += usb.o
 obj-y += usec_time.o
+endif
+
+ifdef CONFIG_SITL_CF2
+obj-y += usec_time_sim.o
+obj-y += pm_sitl.o
+obj-y += socketlink.o
+obj-y += simlink.o
+obj-y += posixmq_wrapper.o
+obj-y += crtpros.o
+obj-y += sensors_sim.o
+obj-y += sensors_sitl.o
+obj-y += storage_sitl.o
+endif

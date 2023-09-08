@@ -5,11 +5,19 @@ menu "Build and debug options"
 config CROSS_COMPILE
     string "Cross-compiler tool prefix"
     default "arm-none-eabi-"
+    depends on !SITL_CF2
     help
         Same as running 'make CROSS_COMPILE=prefix-' but stored for
         default make runs in this application build directory.  You don't
         need to set this unless you want the configured application build
         directory to select the cross-compiler automatically.
+
+config SITL_CF2
+    bool "Build for SITL"
+    default n
+    help
+        Build the firmware for Software-in-the-Loop use with the sim_cf
+        ROS/Gazebo flight simulator.
 
 config DEBUG
     bool "Enable debug build"
@@ -69,6 +77,10 @@ config PLATFORM_CF2
     select SENSORS_BMI088_BMP388
     select SENSORS_MPU9250_LPS25H
 
+config PLATFORM_SITL_CF2
+    bool "Build for SITL"
+    select SENSORS_SITL
+
 config PLATFORM_BOLT
     bool "Build for Bolt"
     select SENSORS_BMI088_BMP388
@@ -124,6 +136,7 @@ menu "Sensor configuration"
 config SENSORS_MPU9250_LPS25H
     bool "Support for mpu9250 and lps25h sensors"
     default n
+    depends on !PLATFORM_SITL_CF2
     help
         Include support for the Bosch bmi088 inertial and bmp388
         barometric sensors
@@ -131,6 +144,7 @@ config SENSORS_MPU9250_LPS25H
 config SENSORS_BMI088_BMP388
     bool "Support for bmi088 and bmp388 sensors"
     default n
+    depends on !PLATFORM_SITL_CF2
     select SENSORS_BMI088_I2C
     help
         Include support for the Bosch bmi088 inertial and bmp388
@@ -139,6 +153,7 @@ config SENSORS_BMI088_BMP388
 config SENSORS_BOSCH
     bool "Include Bosch sensors"
     default n
+    depends on !PLATFORM_SITL_CF2
 
 config SENSORS_IGNORE_BAROMETER_FAIL
     bool "Ignore failure from barometer"
@@ -158,6 +173,13 @@ config SENSORS_BMI088_I2C
     default n
     help
         Include support using I2C with the Bosch bmi088 inertial sensor
+
+config SENSORS_SITL
+    bool "Support for simulated sensors"
+    depends on PLATFORM_SITL_CF2
+    default n
+    help
+        For sim_cf software-in-the-loop use
 
 endmenu
 

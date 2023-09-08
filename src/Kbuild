@@ -1,8 +1,12 @@
+ifndef CONFIG_SITL_CF2
 obj-y += deck/
+endif
 obj-y += drivers/
 obj-y += hal/
 obj-y += init/
+ifndef CONFIG_SITL_CF2
 obj-y += lib/
+endif
 obj-y += modules/
 obj-y += platform/
 obj-y += utils/

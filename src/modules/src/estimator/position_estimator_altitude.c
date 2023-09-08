@@ -24,7 +24,10 @@
  * position_estimator_altitude.c: Altitude-only position estimator
  */
 
+#include "autoconf.h"
+#ifndef CONFIG_SITL_CF2
 #include "stm32f4xx.h"
+#endif
 
 #include "FreeRTOS.h"
 #include "task.h"

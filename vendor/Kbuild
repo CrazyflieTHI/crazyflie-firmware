@@ -1,3 +1,4 @@
+ifndef CONFIG_SITL_CF2
 obj-y += CMSIS/CMSIS/DSP/Source/BasicMathFunctions/arm_abs_f32.o
 obj-y += CMSIS/CMSIS/DSP/Source/BasicMathFunctions/arm_abs_q15.o
 obj-y += CMSIS/CMSIS/DSP/Source/BasicMathFunctions/arm_abs_q31.o
@@ -284,3 +285,16 @@ obj-y += FreeRTOS/stream_buffer.o
 # libdw1000
 obj-y += libdw1000/src/libdw1000.o
 obj-y += libdw1000/src/libdw1000Spi.o
+endif
+
+ifdef CONFIG_SITL_CF2
+obj-y += sitl/FreeRTOS/FreeRTOS/Source/event_groups.o
+obj-y += sitl/FreeRTOS/FreeRTOS/Source/list.o
+obj-y += sitl/FreeRTOS/FreeRTOS/Source/queue.o
+obj-y += sitl/FreeRTOS/FreeRTOS/Source/tasks.o
+obj-y += sitl/FreeRTOS/FreeRTOS/Source/timers.o
+obj-y += sitl/FreeRTOS/FreeRTOS/Source/croutine.o
+obj-y += sitl/FreeRTOS/FreeRTOS/Source/portable/ThirdParty/GCC/Posix/port.o
+obj-y += sitl/FreeRTOS/FreeRTOS/Source/portable/ThirdParty/GCC/Posix/utils/wait_for_event.o
+obj-y += sitl/FreeRTOS/FreeRTOS/Source/portable/MemMang/heap_3.o
+endif

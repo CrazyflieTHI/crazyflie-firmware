@@ -1,3 +1,4 @@
+ifndef CONFIG_SITL_CF2
 obj-$(CONFIG_PRINT_ON_SEGER_RT) += Segger_RTT/RTT
 obj-y += CMSIS/STM32F4xx/Source/system_stm32f4xx.o
 
@@ -44,3 +45,4 @@ obj-y += vl53l1/core/src/vl53l1_error_strings.o
 obj-y += vl53l1/core/src/vl53l1_register_funcs.o
 obj-y += vl53l1/core/src/vl53l1_silicon_core.o
 obj-y += vl53l1/core/src/vl53l1_wait.o
+endif

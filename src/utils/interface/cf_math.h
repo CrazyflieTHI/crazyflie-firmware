@@ -23,6 +23,8 @@
  *
  */
 
+#include "autoconf.h"
+
 #pragma once
 
 // Include "arm_math.h". This header generates some warnings, especially in
@@ -32,6 +34,9 @@
 #pragma GCC diagnostic ignored "-Wpointer-to-int-cast"
 #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
+#ifdef CONFIG_SITL_CF2
+#include "arm_math_sitl.h"
+#else
 #include "arm_math.h"
 #pragma GCC diagnostic pop
 
@@ -117,3 +122,4 @@ static inline void mat_scale(const arm_matrix_instance_f32 * pSrcA, float32_t sc
   arm_status result = arm_mat_scale_f32(pSrcA, scale, pDst);
   ASSERT(ARM_MATH_SUCCESS == result);
 }
+#endif

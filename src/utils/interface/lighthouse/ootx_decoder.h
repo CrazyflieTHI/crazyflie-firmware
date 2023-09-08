@@ -28,12 +28,15 @@
 
 #pragma once
 
+#include "autoconf.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 
 
 #define OOTX_MAX_FRAME_LENGTH 43
 
+#ifndef CONFIG_SITL_CF2
 // Content from https://github.com/nairol/LighthouseRedox/blob/master/docs/Base%20Station.md#base-station-info-block
 struct ootxDataFrame_s {
   uint16_t protocolVersion:6;
@@ -63,9 +66,40 @@ struct ootxDataFrame_s {
   __fp16 ogeemag0;
   __fp16 ogeemag1;
 } __attribute__((packed));
+#else
+struct ootxDataFrame_s {
+  uint16_t protocolVersion:6;
+  uint16_t firmwareVersion:10;
+  uint32_t id;
+  float phase0;
+  float phase1;
+  float tilt0;
+  float tilt1;
+  uint8_t unlockCount;
+  uint8_t hwVersion;
+  float curve0;
+  float curve1;
+  int8_t accelX;
+  int8_t accelY;
+  int8_t accelZ;
+  float gibphase0;
+  float gibphase1;
+  float gibmag0;
+  float gibmag1;
+  uint8_t mode;
+  uint8_t faults;
+
+  // Only used in LH 2 that uses a longer data block
+  float ogeephase0;
+  float ogeephase1;
+  float ogeemag0;
+  float ogeemag1;
+} __attribute__((packed));
+#endif
 
 typedef struct ootxDecoderState_s {
   int frameLength;
+  int bytesReceived;
 
   uint16_t currentWord;
 

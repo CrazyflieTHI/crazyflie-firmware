@@ -1,5 +1,15 @@
+ifndef CONFIG_SITL_CF2
 obj-y += estimator_complementary.o
 obj-$(CONFIG_ESTIMATOR_KALMAN_ENABLE) += estimator_kalman.o
 obj-$(CONFIG_ESTIMATOR_UKF_ENABLE) += estimator_ukf.o
 obj-y += estimator.o
 obj-y += position_estimator_altitude.o
+endif
+
+ifdef CONFIG_SITL_CF2
+obj-y += estimator_complementary.o
+obj-$(CONFIG_ESTIMATOR_KALMAN_ENABLE) += estimator_kalman.o
+obj-$(CONFIG_ESTIMATOR_UKF_ENABLE) += estimator_ukf.o
+obj-y += estimator_sitl.o
+obj-y += position_estimator_altitude.o
+endif

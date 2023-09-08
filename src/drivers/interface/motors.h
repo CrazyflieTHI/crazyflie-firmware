@@ -37,7 +37,6 @@
 #include <stdbool.h>
 #include "config.h"
 #include "autoconf.h"
-/* ST includes */
 #include "stm32fxxx.h"
 
 /******** Defines ********/
@@ -242,6 +241,14 @@ typedef struct
   void (*preloadConfig)(TIM_TypeDef* TIMx, uint16_t TIM_OCPreload);
 } MotorPerifDef;
 
+#ifdef CONFIG_SITL_CF2
+typedef struct {
+  uint16_t onPeriodMsec;
+  uint16_t offPeriodMsec;
+  uint16_t varianceMeasurementStartMsec;
+  uint16_t onPeriodPWMRatio;
+} MotorHealthTestDef;
+#else
 typedef struct {
   uint16_t onPeriodMsec;
   uint16_t offPeriodMsec;
@@ -249,6 +256,7 @@ typedef struct {
   uint16_t onPeriodPWMRatioProp;
   uint16_t onPeriodPWMRatioBat;
 } MotorHealthTestDef;
+#endif
 
 /**
  * Motor mapping configurations

@@ -27,6 +27,9 @@
 #ifndef __TRACE_H__
 #define __TRACE_H__
 
+#include "autoconf.h"
+
+#ifndef CONFIG_SITL_CF2
 #define configUSE_TRACE_FACILITY	1
 
 // ITM useful macros
@@ -54,4 +57,5 @@
 #define traceBLOCKING_ON_QUEUE_RECEIVE(xQueue) ITM_SEND(3, ITM_BLOCKING_ON_QUEUE_RECEIVE | ((xQUEUE *) xQueue)->uxQueueNumber)
 #define traceBLOCKING_ON_QUEUE_SEND(xQueue) ITM_SEND(3, ITM_BLOCKING_ON_QUEUE_SEND | ((xQUEUE *) xQueue)->uxQueueNumber)
 
+#endif
 #endif

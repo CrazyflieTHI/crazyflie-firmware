@@ -31,6 +31,8 @@
   #include "stm32f4xx.h"
 #elif defined (STM32F10X_MD)
   #include "stm32f10x.h"
+#elif defined (X86)
+    #include "stm32f_sitl.h"
 #else
   #warning "Don't know which stm32fxxx header file to include"
 #endif

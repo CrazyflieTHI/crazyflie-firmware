@@ -1,3 +1,4 @@
+ifndef CONFIG_SITL_CF2
 obj-y += app_channel.o
 obj-$(CONFIG_APP_ENABLE) += app_handler.o
 obj-y += bootloader.o
@@ -56,3 +57,49 @@ obj-y += estimator/
 obj-y += cpx/
 obj-y += p2pDTR/
 obj-y += outlierfilter/
+endif
+
+ifdef CONFIG_SITL_CF2
+obj-y += system_sitl.o
+obj-y += comm_sitl.o
+obj-y += console_sitl.o
+obj-y += collision_avoidance_sitl.o
+obj-y += mem_sitl.o
+obj-y += platformservice_sitl.o
+obj-y += health_sitl.o
+obj-y += crtp_localization_service_sitl.o
+
+obj-y += app_channel.o
+obj-y += commander.o
+obj-y += crtp_commander_generic.o
+obj-y += crtp_commander_high_level.o
+obj-y += crtp_commander.o
+obj-y += crtp_commander_rpyt.o
+obj-y += crtp.o
+obj-y += crtpservice.o
+obj-y += eventtrigger.o
+obj-$(CONFIG_ESTIMATOR_KALMAN_ENABLE) += kalman_supervisor.o
+obj-y += axis3fSubSampler.o
+obj-y += log.o
+obj-y += param_logic.o
+obj-y += param_task.o
+obj-y += peer_localization.o
+obj-y += planner.o
+obj-$(CONFIG_POWER_DISTRIBUTION_QUADROTOR) += power_distribution_quadrotor.o
+obj-y += pptraj_compressed.o
+obj-y += pptraj.o
+obj-y += queuemonitor.o
+obj-y += range.o
+obj-y += sensfusion6.o
+obj-y += stabilizer.o
+obj-y += supervisor.o
+obj-y += supervisor_state_machine.o
+obj-y += sysload.o
+obj-y += worker.o
+
+# Sub folders
+obj-$(CONFIG_ESTIMATOR_KALMAN_ENABLE) += kalman_core/
+obj-y += controller/
+obj-y += estimator/
+obj-y += outlierfilter/
+endif

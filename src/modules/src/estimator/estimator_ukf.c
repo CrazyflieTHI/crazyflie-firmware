@@ -53,8 +53,11 @@
 #include "estimator_ukf.h"
 #include "estimator.h"
 #include "kalman_supervisor.h"
+// #include "autoconf.h"
 
+#ifndef CONFIG_SITL_CF2
 #include "stm32f4xx.h"
+#endif
 
 #include "FreeRTOS.h"
 #include "queue.h"

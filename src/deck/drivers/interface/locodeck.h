@@ -33,6 +33,10 @@
 #ifndef __LOCODECK_H__
 #define __LOCODECK_H__
 
+#ifdef CONFIG_SITL_CF2
+/* Empty */
+#else
+
 #include <stddef.h>
 #include <stdint.h>
 
