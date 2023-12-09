@@ -7,8 +7,8 @@
  *
  * Crazyflie simulation firmware
  *
- * Copyright (c) 2018  Eric Goubault, Sylvie Putot, Franck Djeumou
- *					   Cosynux , LIX , France
+ * Copyright (C) 2011-2012 Bitcraze AB
+ *               2023 Thomas Izycki, THA, Germany
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,32 +22,37 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- * socketlink.c: Socket implementation of the CRTP link
+ * simlink.c: POSIX message queue implementation of the CRTP Gazebo link
  */
 
-#ifndef __SOCKETLINK_H__
-#define __SOCKETLINK_H__
+#ifndef __GAZEBOLINK_H__
+#define __GAZEBOLINK_H__
 
 #include <stdbool.h>
-#include <stdint.h>
 #include "crtp.h"
 
-/* Initialize the socket link */
-void socketlinkInit();
+#define GAZEBOLINK_PAYLOAD_SIZE 32
 
-/* Return true if the init was successful */
-bool socketlinkTest();
+typedef struct _GazebolinkPacket
+{
+  uint8_t data[GAZEBOLINK_PAYLOAD_SIZE];
+} __attribute__((packed)) GazebolinkPacket;
 
-void setCrtpPort(uint16_t port);
-uint16_t getCrtpPort();
+typedef enum
+{
+  waitForFirstStartGazebo,
+  waitForSecondStartGazebo,
+  waitForTypeGazebo,
+  waitForLengthGazebo,
+  waitForDataGazebo,
+  waitForChksum1Gazebo,
+  waitForChksum2Gazebo
+} GazebolinkRxState;
 
-void setAddressHost(char* addressHost);
-void getAddressHost(char** addressHost);
+void gazebolinkInit();
+bool gazebolinkTest();
+bool isGazebolinkUp();
+int gazebolinkSendPacket(GazebolinkPacket *slp);
+struct crtprosLinkOperations * gazebolinkGetLink();
 
-void setCfId(uint8_t id);
-uint8_t getCfId();
-
-/* Get the socket link (Only link used in SITL) */
-struct crtprosLinkOperations * socketlinkGetLink();
-
-#endif
+#endif /* __GAZEBOLINK_H__ */

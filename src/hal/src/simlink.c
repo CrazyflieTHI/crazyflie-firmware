@@ -35,7 +35,7 @@
 #include "queue.h"
 
 #include <math.h>
-#include "socketlink.h"
+#include "gazebolink.h"
 #include "simlink.h"
 #include "crtp.h"
 #include "static_mem.h"
@@ -43,6 +43,7 @@
 #include "posixmq_wrapper.h"
 #include "debug.h"
 #include "errno.h"
+#include "configblock_sim.h"
 
 #define SIMLINK_TX_QUEUE_SIZE (1)
 #define SIMLINK_CRTP_QUEUE_SIZE (5)
@@ -62,9 +63,11 @@ static int simlinkSendCRTPPacket(CRTPPacket *p);
 static int simlinkSetEnable(bool enable);
 static int simlinkReceiveCRTPPacket(CRTPPacket *p);
 
+static const unsigned long timeout = 100000000ul; // 100ms
+
 // Posix message queues for ipc
-mqd_t rxSimQueue;
-mqd_t txSimQueue;
+static mqd_t rxSimQueue;
+static mqd_t txSimQueue;
 
 static bool simlinkIsConnected(void) {
   // return (xTaskGetTickCount() - lastPacketTick) < M2T(SIM_ACTIVITY_TIMEOUT_MS);
@@ -82,20 +85,20 @@ static struct crtpLinkOperations simlinkOp =
 void simlinkInit(void)
 {
   int errnum;
-  uint8_t cf_id = getCfId();
 
   if (isInit)
     return;
 
-  /* cf_id gets set in main_sitl */
-  int digitCount = log10(cf_id) + 1;
+  /* crazyflieId gets set in main_sitl */
+  uint8_t crazyflieId = getCrazyflieId();
+  int digitCount = log10(crazyflieId) + 1;
   if(digitCount == 1) {
     cfIdStr[0] = '0';
-    cfIdStr[1] = (cf_id % 10) + '0';
+    cfIdStr[1] = (crazyflieId % 10) + '0';
   } else if(digitCount == 2) {
-    for (int i = digitCount-1; i >= 0; --i, cf_id /= 10)
+    for (int i = digitCount-1; i >= 0; --i, crazyflieId /= 10)
     {
-        cfIdStr[i] = (cf_id % 10) + '0';
+        cfIdStr[i] = (crazyflieId % 10) + '0';
     }
   } else {
     printf("ERROR: Simlink Init.\n");
@@ -112,13 +115,13 @@ void simlinkInit(void)
           cfIdStr, 2*sizeof(char));
   // printf("Name of tx queue: %s\n", txIpcCrtpQueueName);
 
-  rxSimQueue = openMqPosixNonblock(rxIpcCrtpQueueName, 100, 33, &errnum);
+  rxSimQueue = openMqPosixNonblock(rxIpcCrtpQueueName, 10, 33, &errnum);
   if(rxSimQueue == -1) {
     DEBUG_PRINT("ERROR %d: Couldn't open POSIX mq RX.\n", errnum);
     return;
   }
 
-  txSimQueue = openMqPosixNonblock(txIpcCrtpQueueName, 100, 33, &errnum);
+  txSimQueue = openMqPosixNonblock(txIpcCrtpQueueName, 10, 33, &errnum);
   if(txSimQueue == -1) {
     DEBUG_PRINT("ERROR %d: Couldn't open POSIX mq TX.\n", errnum);
     return;
@@ -135,8 +138,8 @@ static int simlinkReceiveCRTPPacket(CRTPPacket *p)
 
   /* https://stackoverflow.com/questions/29245596/c-gracefully-interrupting-msgrcv-system-call */
   /* Without the delay other tasks seem to starve in simulation */
-  while ((ret = rcvMqPosixTimed(rxSimQueue, (char*)&slp, sizeof(SimlinkPacket), &rxPrio, 0.01, &errnum) == -1) || (errnum == EINTR))
-    vTaskDelay(M2T(15));
+  while ((ret = rcvMqPosixTimed(rxSimQueue, (char*)&slp, sizeof(SimlinkPacket), &rxPrio, timeout, &errnum) == -1) || (errnum == EINTR))
+    vTaskDelay(M2T(2));
 
   if(ret == -1) {
     DEBUG_PRINT("ERROR RX Simlink: %d\n", errnum);
@@ -144,7 +147,7 @@ static int simlinkReceiveCRTPPacket(CRTPPacket *p)
   }
 
   /* Without the delay the queue runs full in simulation */
-  vTaskDelay(M2T(5));
+  vTaskDelay(M2T(2));
 
   if (ret >= 0)
   {
@@ -170,7 +173,7 @@ static int simlinkSendCRTPPacket(CRTPPacket *p)
   memcpy(&slp.data, p, sizeof(CRTPPacket));
 
   while(ret == -1) {
-    ret = sendMqPosixTimed(txSimQueue, (char*)&slp, sizeof(SimlinkPacket), txPrio, 0, &errnum);
+    ret = sendMqPosixTimed(txSimQueue, (char*)&slp, sizeof(SimlinkPacket), txPrio, timeout, &errnum);
     vTaskDelay(M2T(1));
   }
 

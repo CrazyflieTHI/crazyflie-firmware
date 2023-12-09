@@ -25,6 +25,8 @@
  * main_sitl.c - Containing the main function.for the SITL simulation based on main.c
  */
 
+#include <unistd.h>
+
 /* Personal configs */
 #include "FreeRTOSConfig.h"
 
@@ -43,7 +45,7 @@
 #include <string.h>
 
 /* Project includes */
-#include "socketlink.h"
+#include "gazebolink.h"
 #include "config.h"
 #include "system.h"
 #include "usec_time.h"
@@ -66,39 +68,21 @@ StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
     static BaseType_t xTraceRunning = pdTRUE;
 #endif
 
-#define CRTP_PORT 19950
-char CRTP_SERVER_ADDRESS[] = "INADDR_ANY";
+void vApplicationIdleHook( void );
 
-static uint16_t cf_id;
-static uint8_t crtp_port;
-static char* address_host;
+/* Necessary for gprof profiler to work */
+void handle_signal(int signum) {
+    exit(0);
+}
 
 int main(int argc, char **argv) 
 {
+    signal(SIGINT, handle_signal);
 
-  if (argc == 4){
-    cf_id = atoi(argv[1]);
-    crtp_port = atoi(argv[2]);
-    address_host = argv[3];
-    setCrazyflieId(cf_id);
+    uint8_t crazyflieId = atoi(argv[1]);
+    setCrazyflieId(crazyflieId);
     uint64_t crazyflie_address = configblockGetRadioAddress();
-    printf("CF id : %d , address : %lx , port : %d \n", cf_id , crazyflie_address , crtp_port );
-  } else if (argc == 2) {
-    // Initialize socket parameters
-    cf_id = atoi(argv[1]);
-    crtp_port =  CRTP_PORT;
-    address_host = CRTP_SERVER_ADDRESS;
-    printf("CF id : %d , address : %s , port : %d \n", cf_id , address_host , crtp_port );
-  } else {
-    cf_id = 1;
-    crtp_port =  CRTP_PORT;
-    address_host = CRTP_SERVER_ADDRESS;
-    printf("No port and ADDRESS selected ! 1-19950-INADDR_ANY selected as default\n");
-  }
-
-  setCfId(cf_id);
-  setCrtpPort(crtp_port);
-  setAddressHost(address_host);
+    printf("SITL: CF id : %d , address : %lx \n", crazyflieId , crazyflie_address );
 
   //Initialize the platform.
   int err = platformInit();
@@ -267,4 +251,22 @@ void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName )
 	( void ) pxTask;
 	( void ) pcTaskName;
 	for( ;; );
+}
+
+
+void vApplicationIdleHook( void )
+{
+    /* vApplicationIdleHook() will only be called if configUSE_IDLE_HOOK is set
+     * to 1 in FreeRTOSConfig.h.  It will be called on each iteration of the idle
+     * task.  It is essential that code added to this hook function never attempts
+     * to block in any way (for example, call xQueueReceive() with a block time
+     * specified, or call vTaskDelay()).  If application tasks make use of the
+     * vTaskDelete() API function to delete themselves then it is also important
+     * that vApplicationIdleHook() is permitted to return to its calling function,
+     * because it is the responsibility of the idle task to clean up memory
+     * allocated by the kernel to any task that has since deleted itself. */
+
+
+    usleep( 15000 );
+
 }

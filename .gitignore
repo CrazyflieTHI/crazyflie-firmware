@@ -48,3 +48,9 @@ build/
 *.elf
 
 tools/dependency/web/data.js
+
+#profiling
+gmon.out
+prof_call_graph.txt
+prof_flat.txt
+

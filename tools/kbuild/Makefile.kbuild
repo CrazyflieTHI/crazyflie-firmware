@@ -222,7 +222,11 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 HOSTCC       = gcc
 HOSTCXX      = g++
 HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2
-HOSTCFLAGS  += -fomit-frame-pointer -std=gnu89
+ifdef PROFILE
+	HOSTCFLAGS  += -std=gnu11
+else ifdef CONFIG_FRAME_POINTER
+	HOSTCFLAGS  += -fomit-frame-pointer -std=gnu89
+endif
 HOSTCXXFLAGS = -O2
 
 ifeq ($(shell $(HOSTCC) -v 2>&1 | grep -c "clang version"), 1)
@@ -479,9 +483,11 @@ KBUILD_CFLAGS += $(call cc-disable-warning, unused-const-variable)
 endif
 
 ifdef CONFIG_FRAME_POINTER
-KBUILD_CFLAGS	+= -fno-omit-frame-pointer -fno-optimize-sibling-calls
+    KBUILD_CFLAGS += -fno-omit-frame-pointer -fno-optimize-sibling-calls
+else ifdef PROFILE
+    KBUILD_CFLAGS += -fno-omit-frame-pointer -fno-optimize-sibling-calls
 else
-KBUILD_CFLAGS	+= -fomit-frame-pointer
+    KBUILD_CFLAGS += -fomit-frame-pointer
 endif
 
 KBUILD_CFLAGS   += $(call cc-option, -fno-var-tracking-assignments)

@@ -4,6 +4,11 @@
 #
 export KCONFIG_ALLCONFIG ?= configs/all.config
 
+ifeq ($(PROFILE),1)
+export PROFILE=1
+$(info Building with profiling)
+endif
+
 KBUILD_OUTPUT ?= build
 
 -include $(KBUILD_OUTPUT)/include/config/auto.conf
@@ -226,8 +231,11 @@ PYTHON            ?= python3
 ARCH := x86
 SRCARCH := x86
 
-# ARCH_CFLAGS += -Os -g3 -Wall -Wno-maybe-uninitialized -Werror -Wno-error=overflow
-ARCH_CFLAGS += -std=gnu11 -Os -g3 -Wall -Wno-maybe-uninitialized -Werror -Wno-error=overflow
+ifdef PROFILE
+ARCH_CFLAGS += -std=gnu11 -Os -g3 -pg -Wall -Wno-maybe-uninitialized -Werror -Wno-error=overflow
+else
+ARCH_CFLAGS += -std=gnu11 -O0 -g -Wall -Wno-maybe-uninitialized -Werror -Wno-error=overflow
+endif
 ARCH_CFLAGS += -Wno-error=unused-but-set-variable -Wno-error=incompatible-pointer-types -Wno-error=pointer-to-int-cast
 ARCH_CFLAGS += -Wno-error=format= -Wno-error=int-to-pointer-cast -Wno-error=address-of-packed-member
 ARCH_CFLAGS += -Wno-error=stringop-truncation -Wno-error=maybe-uninitialized -Wno-error=unused-variable
@@ -246,6 +254,9 @@ image_LDFLAGS += -T $(LINKER_DIR)/log_param_linker.ld
 LDFLAGS += -lpthread -lrt
 LDFLAGS += -lgsl -lgslcblas -lm
 LDFLAGS += -L/usr/local/lib/
+ifdef PROFILE
+LDFLAGS += -pg -O0
+endif
 
 INCLUDES += -I$(srctree)/vendor/sitl/FreeRTOS/FreeRTOS/Source/include/
 INCLUDES += -I$(srctree)/vendor/sitl/FreeRTOS/FreeRTOS/Source/portable/ThirdParty/GCC/Posix/
@@ -299,6 +310,8 @@ else
 ARCH_CFLAGS += -Os -Werror
 endif
 
+GPROF_OPTIONS := --directory-path=$(INCLUDES)
+
 _all:
 
 all: $(PROG).hex $(PROG).bin
@@ -314,6 +327,7 @@ all: $(PROG).hex $(PROG).bin
 
 include tools/make/targets.mk
 
+
 #Print preprocessor #defines
 prep:
 	@$(CC) $(CFLAGS) -dM -E - < /dev/null
@@ -321,12 +335,15 @@ prep:
 check_submodules:
 	@cd $(srctree); $(PYTHON) tools/make/check-for-submodules.py
 
+profile:
+	@echo "Profiling the $(PLATFORM) build..."
+	gprof -a -p --all-lines $(GPROF_OPTIONS) $(srctree)/build/cf2.elf $(srctree)/gmon.out > $(srctree)/prof_flat.txt
+	gprof -a --graph $(GPROF_OPTIONS) $(srctree)/build/cf2.elf $(srctree)/gmon.out > $(srctree)/prof_call_graph.txt
 
 else
     $(error Invalid target specified)
 	@exit 1
 endif
-
 
 # Give control over to Kbuild
 -include tools/kbuild/Makefile.kbuild

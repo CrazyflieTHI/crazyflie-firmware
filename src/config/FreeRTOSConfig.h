@@ -76,8 +76,8 @@
 #ifndef CONFIG_SITL_CF2
 #define configUSE_IDLE_HOOK			1
 #else
-/* We don't want any call to the watchdog since no watchdog in SITL*/
-#define configUSE_IDLE_HOOK         0
+/* In SITL we define own idle hook */
+#define configUSE_IDLE_HOOK     1
 #endif
 #define configUSE_TICK_HOOK			0
 #define configCPU_CLOCK_HZ			( ( unsigned long ) FREERTOS_MCU_CLOCK_HZ )

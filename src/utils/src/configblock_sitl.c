@@ -90,3 +90,8 @@ void setCrazyflieId(uint8_t newCrazyflieId)
   crazyflieId = newCrazyflieId;
   crazyflieAddr = (RADIO_ADDRESS_SIM_BASE & RADIO_ADDRESS_SIM_MASK) | crazyflieId;
 }
+
+uint8_t getCrazyflieId()
+{
+  return crazyflieId;
+}

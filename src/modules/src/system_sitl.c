@@ -47,7 +47,7 @@
 #include "stabilizer.h"
 #include "commander.h"
 #include "console.h"
-#include "socketlink.h"
+#include "gazebolink.h"
 #include "simlink.h"
 #include "crtpros.h"
 #include "mem.h"
@@ -90,7 +90,7 @@ void systemInit(void)
   canStartMutex = xSemaphoreCreateMutex();
   xSemaphoreTake(canStartMutex, portMAX_DELAY);
 
-  socketlinkInit();
+  gazebolinkInit();
   simlinkInit();
   sysLoadInit();
 

@@ -36,7 +36,7 @@
 #include "crtpservice.h"
 #include "param_task.h"
 #include "log.h"
-#include "socketlink.h"
+#include "gazebolink.h"
 #include "simlink.h"
 #include "platformservice.h"
 #include "crtp_localization_service.h"
@@ -54,7 +54,7 @@ void commInit(void)
   // crtpInit();
   // consoleInit();
 
-  crtprosSetLink(socketlinkGetLink());
+  crtprosSetLink(gazebolinkGetLink());
   crtpSetLink(simlinkGetLink());
   DEBUG_PRINT("CRTP link set to socket link \n");
 
