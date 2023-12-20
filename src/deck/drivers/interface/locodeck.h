@@ -135,4 +135,5 @@ struct lppShortAnchorPos_s {
   float z;
 } __attribute__((packed));
 
+#endif // CONFIG_SITL_CF2
 #endif // __LOCODECK_H__
