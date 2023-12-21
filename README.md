@@ -97,6 +97,21 @@ make -j
 ![sitl_make_build_for_x86](docs/images/sim_cf2/sitl_make_build_for_x86.png)
 
 
+## Run SITL Instances
+
+A script to start the SITL instances is located under scripts/sim_cf2. Open a new terminal and move to the scripts/sim_cf2 folder in this repository (assuming ~/repos/crazyflie-firmware)
+
+```sh
+cd ~/repos/crazyflie-firmware/scripts/sim_cf2
+```
+
+Run the *run_cfs.sh* script with as many instances of simulated Crazyflies as needed by providing the amount of Crazyflies as argument (e.g. two)
+
+```sh
+./run_cfs.sh 2
+```
+
+
 # Crazyflie Firmware  [![CI](https://github.com/bitcraze/crazyflie-firmware/workflows/CI/badge.svg)](https://github.com/bitcraze/crazyflie-firmware/actions?query=workflow%3ACI)
 
 This project contains the source code for the firmware used in the Crazyflie range of platforms, including the Crazyflie 2.X and the Roadrunner.
