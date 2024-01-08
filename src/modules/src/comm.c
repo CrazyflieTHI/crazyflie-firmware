@@ -40,6 +40,7 @@
 #include "platformservice.h"
 #include "syslink.h"
 #include "crtp_localization_service.h"
+#include "macp.h"
 
 static bool isInit;
 
@@ -70,7 +71,11 @@ void commInit(void)
   //  crtpSetLink(usbGetLink);
   //else if(radiolinkTest())
   //  crtpSetLink(radiolinkGetLink());
-  
+
+  #ifdef CONFIG_ENABLE_MACP
+  macpInit();
+  #endif
+
   isInit = true;
 }
 

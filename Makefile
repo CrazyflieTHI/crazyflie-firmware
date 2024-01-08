@@ -71,7 +71,7 @@ INCLUDES += -I$(srctree)/src/deck/interface -I$(srctree)/src/deck/drivers/interf
 INCLUDES += -I$(srctree)/src/drivers/interface -I$(srctree)/src/drivers/bosch/interface
 INCLUDES += -I$(srctree)/src/drivers/esp32/interface
 INCLUDES += -I$(srctree)/src/hal/interface
-INCLUDES += -I$(srctree)/src/modules/interface -I$(srctree)/src/modules/interface/kalman_core -I$(srctree)/src/modules/interface/lighthouse  -I$(srctree)/src/modules/interface/outlierfilter
+INCLUDES += -I$(srctree)/src/modules/interface -I$(srctree)/src/modules/interface/kalman_core -I$(srctree)/src/modules/interface/lighthouse  -I$(srctree)/src/modules/interface/outlierfilter -I$(srctree)/src/modules/interface/multi_agent
 INCLUDES += -I$(srctree)/src/modules/interface/cpx -I$(srctree)/src/modules/interface/p2pDTR -I$(srctree)/src/modules/interface/controller  -I$(srctree)/src/modules/interface/estimator
 INCLUDES += -I$(srctree)/src/utils/interface -I$(srctree)/src/utils/interface/kve -I$(srctree)/src/utils/interface/lighthouse -I$(srctree)/src/utils/interface/tdoa
 INCLUDES += -I$(LIB)/FatFS
@@ -278,6 +278,8 @@ INCLUDES += -I$(srctree)/src/utils/interface/
 INCLUDES += -I$(srctree)/src/utils/interface/lighthouse/
 INCLUDES += -I$(srctree)/src/drivers/interface/
 INCLUDES += -I$(srctree)/src/lib/CMSIS/STM32F4xx/Include/
+
+INCLUDES += -I$(srctree)/src/modules/interface/multi_agent
 
 INCLUDES += -I$(KBUILD_OUTPUT)/include/generated
 

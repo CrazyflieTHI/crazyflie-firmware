@@ -43,4 +43,11 @@ config CPX_UART2_BAUDRATE
   help
       Set the baudrate that will be used for CPX on UART2
 
+config ENABLE_MACP
+  bool "Enable MACP"
+  default n
+  help
+    Multi-agent communication protocol (macp) is a layer on top of the crtp and
+    utilizes crtp port 9. It provides pseudo-decentral communication.
+
 endmenu

@@ -41,6 +41,7 @@
 #include "platformservice.h"
 #include "crtp_localization_service.h"
 #include "debug.h"
+#include "macp.h"
 
 static bool isInit;
 
@@ -70,7 +71,12 @@ void commInit(void)
 
   locSrvInit();
   DEBUG_PRINT("COMM init succeed \n");
-  
+
+  #ifdef CONFIG_ENABLE_MACP
+  macpInit();
+  DEBUG_PRINT("MACP init finished \n");
+  #endif
+
   isInit = true;
 }
 
