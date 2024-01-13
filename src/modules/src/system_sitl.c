@@ -57,13 +57,8 @@
 #include "estimator_kalman.h"
 #include "pm.h"
 
-#define ARM_INIT true
-
 /* Private variable */
 static bool selftestPassed;
-static bool canFly;
-static bool armed = ARM_INIT;
-static bool forceArm;
 static bool isInit;
 
 /* System wide synchronisation */
@@ -207,42 +202,3 @@ void systemWaitStart(void)
   xSemaphoreTake(canStartMutex, portMAX_DELAY);
   xSemaphoreGive(canStartMutex);
 }
-
-void systemSetCanFly(bool val)
-{
-  canFly = val;
-}
-
-bool systemCanFly(void)
-{
-  return canFly;
-}
-
-void systemSetArmed(bool val)
-{
-  armed = val;
-}
-
-bool systemIsArmed()
-{
-
-  return armed || forceArm;
-}
-
-/* No need  since no physical FLASH memory */
-/*System parameters (mostly for test, should be removed from here) */
-/*PARAM_GROUP_START(cpu)
-PARAM_ADD(PARAM_UINT16 | PARAM_RONLY, flash, MCU_FLASH_SIZE_ADDRESS)
-PARAM_ADD(PARAM_UINT32 | PARAM_RONLY, id0, MCU_ID_ADDRESS+0)
-PARAM_ADD(PARAM_UINT32 | PARAM_RONLY, id1, MCU_ID_ADDRESS+4)
-PARAM_ADD(PARAM_UINT32 | PARAM_RONLY, id2, MCU_ID_ADDRESS+8)
-PARAM_GROUP_STOP(cpu)*/
-
-PARAM_GROUP_START(system)
-PARAM_ADD(PARAM_INT8, selftestPassed, &selftestPassed)
-PARAM_GROUP_STOP(sytem)
-
-/* Loggable variables */
-LOG_GROUP_START(sys)
-LOG_ADD(LOG_INT8, canfly, &canFly)
-LOG_GROUP_STOP(sys)
