@@ -60,6 +60,7 @@
 /* Private variable */
 static bool selftestPassed;
 static bool isInit;
+static bool notInit = false;
 
 /* System wide synchronisation */
 xSemaphoreHandle canStartMutex;
@@ -202,3 +203,26 @@ void systemWaitStart(void)
   xSemaphoreTake(canStartMutex, portMAX_DELAY);
   xSemaphoreGive(canStartMutex);
 }
+
+
+PARAM_GROUP_START(deck)
+
+/* lighthouse "attached" in simulation */
+PARAM_ADD_CORE(PARAM_UINT8 | PARAM_RONLY, bcLighthouse4, &isInit)
+
+/* lps deck is not attacked */
+PARAM_ADD_CORE(PARAM_UINT8 | PARAM_RONLY, bcLoco, &notInit)
+
+/* zRanger deck is not attacked */
+PARAM_ADD_CORE(PARAM_UINT8 | PARAM_RONLY, bcZRanger, &notInit)
+
+/* flow deck is not attacked */
+PARAM_ADD_CORE(PARAM_UINT8 | PARAM_RONLY, bcFlow, &notInit)
+
+/* flow deck is not attacked */
+PARAM_ADD_CORE(PARAM_UINT8 | PARAM_RONLY, bcZRanger2, &notInit)
+
+/* flow deck is not attacked */
+PARAM_ADD_CORE(PARAM_UINT8 | PARAM_RONLY, bcFlow2, &notInit)
+
+PARAM_GROUP_STOP(deck)
