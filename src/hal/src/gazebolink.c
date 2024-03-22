@@ -172,9 +172,6 @@ static int gazebolinkReceiveCRTPPacket(CRTPPacket *p)
     vTaskDelay(M2T(500));
   }
 
-  /* Without the delay the queue runs full in simulation */
-  vTaskDelay(M2T(1));
-
   if (ret >= 0)
   {
     memcpy(p, &glp.data, sizeof(CRTPPacket));
