@@ -95,7 +95,7 @@ extern unsigned long ulPortGetTimerValue( void );
 #define CRTP_TX_TASK_PRI        2
 #define CRTP_RX_TASK_PRI        2
 #define CRTPROS_TX_TASK_PRI     2
-#define CRTPROS_RX_TASK_PRI     2
+#define CRTPROS_RX_TASK_PRI     1
 #define EXTRX_TASK_PRI          2
 #define ZRANGER_TASK_PRI        2
 #define ZRANGER2_TASK_PRI       2
