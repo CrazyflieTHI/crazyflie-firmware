@@ -240,3 +240,13 @@ config PARAM_SILENT_UPDATES
         what you are doing.
 
 endmenu
+
+menu "SITL real time factor"
+
+config REAL_TIME_FACTOR_05
+    bool "Use a real time factor of 0.5"
+    default n
+    help
+        With a real time factor of 0.5 the system time of one millisecond corresponds to two ms in real time
+
+endmenu
